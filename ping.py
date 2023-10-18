@@ -7,6 +7,7 @@ import struct
 import select
 import time
 import threading
+from statistics import mean
 
 
 default_timer = time.time
@@ -93,6 +94,7 @@ def do_one(dest_addr,timeout):
     return rtt
 
 def multi_ping(dest_addr,timeout,count):
+    arr = []
     for i in range(count):
         print("ping '{}' ... ".format(dest_addr), end='')
         try:
@@ -102,11 +104,17 @@ def multi_ping(dest_addr,timeout,count):
             break
         
         if rtt is None:
-            print("Timeout > {}s".format(timeout))
+            print("Timeout > {} s".format(timeout))
         else:
-            rtt+=1000
-            print("RTT is {}ms".format(int(rtt)))
+            print("RTT is {} s".format(rtt))
+            arr.append(rtt)
         print
+    arr.sort()
+    print("min rtt is {} s".format(arr[0]))
+    print("max rtt is {} s".format(arr[count-1]))
+    m = mean(arr)
+    print("Mean rtt is {} s".format(m))
+        
         
 host=input("Give a hostname or IP you want to ping or recieve: ")
 #default. Can change if wanted
